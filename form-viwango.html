@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+  <meta charset="UTF-8">
+  <title>Viwango Stationery - Huduma za Vyuo</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #004080;
+      color: white;
+      padding: 15px;
+      text-align: center;
+    }
+    main {
+      max-width: 800px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      margin-top: 20px;
+    }
+    h2 {
+      text-align: center;
+      color: #004080;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+    input, select, button, textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+    }
+    .admin-section {
+      display: none;
+      margin-top: 30px;
+      border-top: 2px solid #ccc;
+      padding-top: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 5px;
+      text-align: left;
+    }
+    .approved {
+      background: #e0ffe0;
+    }
+    footer {
+      text-align: center;
+      font-size: 12px;
+      margin-top: 30px;
+      color: gray;
+    }
+    .watermark {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      opacity: 0.1;
+      font-size: 50px;
+      transform: rotate(-30deg);
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Viwango Stationery</h1>
+    <p>Huduma za kujaza maombi ya vyuo vikuu Tanzania</p>
+  </header>
+
+  <div class="watermark">Viwango Stationery</div>
+
+  <main>
+    <h2>Fomu ya Maombi ya Chuo</h2>
+    <form id="studentForm">
+      <label>Jina Kamili:</label>
+      <input type="text" required name="jina">
+      
+      <label>Namba ya Mtihani Kidato cha Nne:</label>
+      <input type="text" required name="form4">
+      
+      <label>Namba ya Mtihani Kidato cha Sita:</label>
+      <input type="text" name="form6">
+      
+      <label>Mwaka wa Kuzaliwa:</label>
+      <input type="number" name="dob" required>
+      
+      <label>Namba ya Simu:</label>
+      <input type="text" name="simu" required>
+      
+      <label>Sehemu Unayoishi:</label>
+      <input type="text" name="eneo" required>
+
+      <label>Chagua Vyuo:</label>
+      <div id="universitySelect">
+        <!-- Vyuo vitajazwa hapa kwa JavaScript -->
+      </div>
+
+      <label>Chuo Hakipo? Ongeza hapa:</label>
+      <input type="text" id="extraUniversity" placeholder="Andika jina la chuo hapa">
+      <button type="button" onclick="addUniversity()">Ongeza Chuo</button>
+
+      <br><br>
+      <button type="submit">Tuma Maombi</button>
+    </form>
+
+    <!-- Admin Login -->
+    <div style="margin-top: 40px;">
+      <h2>Admin Login</h2>
+      <label>Username:</label>
+      <input type="text" id="adminUser">
+      <label>Password:</label>
+      <input type="password" id="adminPass">
+      <button onclick="loginAdmin()">Ingia</button>
+    </div>
+
+    <!-- Admin Section -->
+    <div class="admin-section" id="adminPanel">
+      <h2>Admin Panel</h2>
+      <p>Idadi ya Maombi: <span id="totalApps">0</span></p>
+      <table>
+        <thead>
+          <tr>
+            <th>Jina</th>
+            <th>Form 4</th>
+            <th>Form 6</th>
+            <th>Mwaka</th>
+            <th>Simu</th>
+            <th>Eneo</th>
+            <th>Vyuo</th>
+            <th>Approval</th>
+          </tr>
+        </thead>
+        <tbody id="adminTable"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <footer>
+    &copy; 2025 Viwango Stationery
+  </footer>
+
+  <script>
+    const universities = [
+      "University of Dar es Salaam (UDSM)",
+      "Sokoine University of Agriculture (SUA)",
+      "Open University of Tanzania (OUT)",
+      "State University of Zanzibar (SUZA)",
+      "Mzumbe University (MU)",
+      "Nelson Mandela African Institution of Science and Technology (NM-AIST)",
+      "Muhimbili University of Health and Allied Sciences (MUHAS)",
+      "Ardhi University (ARU)",
+      "University of Dodoma (UDOM)",
+      "Mbeya University of Science and Technology (MUST)",
+      "Moshi Cooperative University (MoCU)",
+      "Mwalimu Julius K. Nyerere University of Agriculture and Technology (MJNUAT)",
+      "Kairuki University (KU)",
+      "Abdulrahman Al-Sumait University (SUMAIT)",
+      "KCMC University",
+      "St. Augustine University of Tanzania (SAUT)",
+      "Zanzibar University (ZU)",
+      "Tumaini University Makumira (TUMA)",
+      "Aga Khan University (AKU)",
+      "Catholic University of Health and Allied Sciences (CUHAS)",
+      "University of Arusha (UoA)",
+      "St. Joseph University in Tanzania (SJUIT)",
+      "Teofilo Kisanji University (TEKU)",
+      "Muslim University of Morogoro (MUM)",
+      "Mwenge Catholic University (MWECAU)",
+      "University of Iringa (UoI)",
+      "St. John's University of Tanzania (SJUT)",
+      "Kampala International University in Tanzania (KIUT)",
+      "United African University of Tanzania (UAUT)",
+      "Ruaha Catholic University (RUCU)",
+      "Mwanza University (MzU)",
+      "Catholic University of Mbeya (CUoM)",
+      "Dar es Salaam Tumaini University (DarTU)"
+    ];
+
+    const universitySelectDiv = document.getElementById("universitySelect");
+    universities.forEach(name => {
+      const label = document.createElement("label");
+      label.innerHTML = `<input type="checkbox" name="vyuo" value="${name}"> ${name}`;
+      universitySelectDiv.appendChild(label);
+      universitySelectDiv.appendChild(document.createElement("br"));
+    });
+
+    function addUniversity() {
+      const extra = document.getElementById("extraUniversity").value.trim();
+      if (extra) {
+        const label = document.createElement("label");
+        label.innerHTML = `<input type="checkbox" name="vyuo" value="${extra}"> ${extra} (added manually)`;
+        universitySelectDiv.appendChild(label);
+        universitySelectDiv.appendChild(document.createElement("br"));
+        document.getElementById("extraUniversity").value = "";
+      }
+    }
+
+    document.getElementById("studentForm").addEventListener("submit", function(e){
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(this));
+      data.approved = false;
+
+      let apps = JSON.parse(localStorage.getItem("apps") || "[]");
+      apps.push(data);
+      localStorage.setItem("apps", JSON.stringify(apps));
+      alert("Maombi yametumwa!");
+      this.reset();
+    });
+
+    function loginAdmin() {
+      const u = document.getElementById("adminUser").value;
+      const p = document.getElementById("adminPass").value;
+      if (u === "admin" && p === "admin123") {
+        document.getElementById("adminPanel").style.display = "block";
+        loadSubmissions();
+      } else {
+        alert("Jina la mtumiaji au nenosiri si sahihi.");
+      }
+    }
+
+    function loadSubmissions() {
+      const data = JSON.parse(localStorage.getItem("apps") || "[]");
+      const tbody = document.getElementById("adminTable");
+      tbody.innerHTML = "";
+      document.getElementById("totalApps").textContent = data.length;
+      data.forEach((d, i) => {
+        const tr = document.createElement("tr");
+        tr.className = d.approved ? "approved" : "";
+        tr.innerHTML = `
+          <td>${d.jina}</td>
+          <td>${d.form4}</td>
+          <td>${d.form6}</td>
+          <td>${d.dob}</td>
+          <td>${d.simu}</td>
+          <td>${d.eneo}</td>
+          <td>${d.vyuo.join(", ")}</td>
+          <td>
+            ${d.approved ? "✔ Tayari" : `<button onclick="approve(${i})">Approve</button>`}
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function approve(index) {
+      let apps = JSON.parse(localStorage.getItem("apps") || "[]");
+      apps[index].approved = true;
+      localStorage.setItem("apps", JSON.stringify(apps));
+      loadSubmissions();
+    }
+  </script>
+</body>
+</html>
